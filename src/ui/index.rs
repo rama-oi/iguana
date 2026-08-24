@@ -9,8 +9,6 @@ use ratatui::{
 
 use crate::app::App;
 
-pub const SETTINGS_LABEL: &str = "iguana :: settings";
-
 pub fn draw_index(frame: &mut Frame, app: &mut App) {
     let theme = app.theme().clone();
     let full_area = frame.area();
@@ -72,7 +70,11 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
         .collect();
 
     items.push(
-        ListItem::new(truncate_label(SETTINGS_LABEL, name_width)).style(
+        ListItem::new(truncate_label(
+            &format!("{} :: settings", env!("CARGO_PKG_NAME")),
+            name_width,
+        ))
+        .style(
             Style::default()
                 .fg(theme.colors.accent)
                 .add_modifier(Modifier::ITALIC),
