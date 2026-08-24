@@ -1,0 +1,20 @@
+[package]
+name = "iguana"
+version = "2026.1.0"
+edition = "2024"
+description = "TUI Launcher"
+authors = ["Pombo <https://github.com/pomboverso>"]
+license = "GPL-3.0-or-later"
+repository = "https://github.com/rama-oi/iguana"
+homepage = "https://github.com/rama-oi/iguana"
+readme = "readme.md"
+keywords = ["launcher", "linux", "tui", "foss", "sway"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+color-eyre = "0.6.5"
+crossterm = "0.29.0"
+ratatui = "0.30.2"
+serde = {version = "1.0.229",  features = ["derive"] }
+toml = "0.9"
+meval = "0.2"
