@@ -134,4 +134,3 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<
 
     Ok(())
 }
-
