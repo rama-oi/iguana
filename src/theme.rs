@@ -27,26 +27,13 @@ pub struct ThemeColors {
     pub selection_fg: Color,
     #[serde(deserialize_with = "deserialize_color")]
     pub selection_bg: Color,
-    // #[serde(deserialize_with = "deserialize_color")]
-    // pub claws: Color,
-    // #[serde(deserialize_with = "deserialize_color")]
-    // pub claws_light: Color,
-    // #[serde(deserialize_with = "deserialize_color")]
-    // pub claws_shadow: Color,
-
-    // #[serde(deserialize_with = "deserialize_color")]
-    // pub shell: Color,
-    // #[serde(deserialize_with = "deserialize_color")]
-    // pub shell_light: Color,
-    // #[serde(deserialize_with = "deserialize_color")]
-    // pub shell_shadow: Color,
 }
 
 impl Theme {
     pub fn fallback() -> Self {
         Self {
             name: "Default".to_string(),
-            author: "caiman".to_string(),
+            author: "iguana".to_string(),
             version: 1,
             colors: ThemeColors {
                 background: Color::Reset,
@@ -56,12 +43,6 @@ impl Theme {
                 accent: Color::Blue,
                 selection_fg: Color::Black,
                 selection_bg: Color::White,
-                // claws: Color::Blue,
-                // claws_light: Color::LightBlue,
-                // claws_shadow: Color::DarkGray,
-                // shell: Color::DarkGray,
-                // shell_light: Color::Gray,
-                // shell_shadow: Color::Black,
             },
         }
     }

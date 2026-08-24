@@ -6,20 +6,10 @@ use ratatui::{
 };
 
 use crate::app::App;
-use crate::ui::index::draw_keyboard_backdrop;
-use crate::ui::modal::render_modal;
-use crate::util::centered_rect;
-
-const HELP_ITEMS: &[&str] = &["[esc] back", "[^q] quit"];
 
 pub fn draw_settings_about(frame: &mut Frame, app: &mut App) {
-    draw_keyboard_backdrop(frame, app, HELP_ITEMS);
-
     let theme = app.theme().clone();
     let full_area = frame.area();
-
-    let modal_area = centered_rect(46, 10, full_area);
-    let inner = render_modal(frame, modal_area, "about", &theme);
 
     let vertical = Layout::default()
         .direction(Direction::Vertical)
@@ -28,32 +18,7 @@ pub fn draw_settings_about(frame: &mut Frame, app: &mut App) {
             Constraint::Length(3),
             Constraint::Fill(1),
         ])
-        .split(inner);
-
-    //     let logo = Paragraph::new(
-    //         "████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████\n\
-    // ████████████████████",
-    //     )
-    //     .alignment(Alignment::Center);
-    //     frame.render_widget(logo, vertical[0]);
+        .split(full_area);
 
     let content = Paragraph::new(format!(
         "{} {}\n{}\n{}",

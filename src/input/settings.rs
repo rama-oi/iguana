@@ -1,8 +1,8 @@
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::app::App;
 use crate::router;
-use crate::ui::settings::{ITEM_ABOUT_CAIMAN, ITEM_COUNT, ITEM_SWITCH_THEME};
+use crate::ui::settings::{ITEM_ABOUT, ITEM_COUNT, ITEM_SWITCH_THEME};
 
 fn select_next_item(app: &mut App) {
     let selected = app.settings_list_state.selected().unwrap_or(0);
@@ -19,7 +19,7 @@ fn select_prev_item(app: &mut App) {
 fn open_selected_item(app: &mut App) {
     match app.settings_list_state.selected() {
         Some(ITEM_SWITCH_THEME) => router::go_to_themes(app),
-        Some(ITEM_ABOUT_CAIMAN) => router::go_to_about(app),
+        Some(ITEM_ABOUT) => router::go_to_about(app),
         _ => {}
     }
 }

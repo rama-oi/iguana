@@ -1,7 +1,8 @@
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::app::App;
 use crate::input::command::quit;
+use crate::router;
 
 pub fn handle_index_input(app: &mut App, key: KeyEvent) {
     match key.code {
@@ -31,16 +32,13 @@ pub fn handle_index_input(app: &mut App, key: KeyEvent) {
 
                 crate::apps::launch(&exec, terminal);
                 app.should_quit = true;
+            } else if app.selected_is_settings() {
+                router::go_to_settings(app);
             }
         }
 
         KeyCode::Down => {
-            let row_count = app.filtered.len();
-
-            if row_count == 0 {
-                return;
-            }
-
+            let row_count = app.index_row_count();
             app.status = None;
 
             let selected = app.index_state.selected().unwrap_or(0);
@@ -55,12 +53,7 @@ pub fn handle_index_input(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Up => {
-            let row_count = app.filtered.len();
-
-            if row_count == 0 {
-                return;
-            }
-
+            let row_count = app.index_row_count();
             app.status = None;
 
             let selected = app.index_state.selected().unwrap_or(0);

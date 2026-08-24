@@ -4,10 +4,12 @@ use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout},
     style::{Modifier, Style},
-    widgets::{Block, Borders, Cell, Padding, Paragraph, Row, Table},
+    widgets::{Block, Borders, List, ListItem, Padding, Paragraph},
 };
 
 use crate::app::App;
+
+pub const SETTINGS_LABEL: &str = "iguana :: settings";
 
 pub fn draw_index(frame: &mut Frame, app: &mut App) {
     let theme = app.theme().clone();
@@ -22,9 +24,11 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
         full_area,
     );
 
+    let mut constraints = vec![Constraint::Length(3), Constraint::Fill(1)];
+
     let vertical = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Length(3), Constraint::Fill(1)])
+        .constraints(constraints)
         .split(full_area);
 
     let input_text = app.query.clone();
@@ -49,33 +53,32 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
     frame.render_widget(input, query_area);
 
     let results_area = vertical[1];
-
-    if app.filtered.is_empty() {
-        let message = if app.entries.is_empty() {
-            "No applications found"
-        } else {
-            "No matches"
-        };
-
-        let empty = Paragraph::new(message).style(Style::default().fg(theme.colors.border));
-        frame.render_widget(empty, results_area);
-        return;
-    }
-
     let name_width = results_area.width.saturating_sub(2);
-    let rows = app.filtered.iter().map(|&i| {
-        let entry = &app.entries[i];
-        Row::new(vec![Cell::from(truncate_label(&entry.name, name_width))])
-    });
 
-    let table = Table::new(rows, [Constraint::Fill(1)])
-        .row_highlight_style(
+    let mut items: Vec<ListItem> = app
+        .filtered
+        .iter()
+        .map(|&i| {
+            let entry = &app.entries[i];
+
+            ListItem::new(truncate_label(&entry.name, name_width))
+        })
+        .collect();
+
+    items.push(
+        ListItem::new(truncate_label(SETTINGS_LABEL, name_width)).style(
             Style::default()
-                .fg(theme.colors.selection_fg)
-                .bg(theme.colors.selection_bg)
-                .add_modifier(Modifier::BOLD),
-        )
-        .highlight_symbol("> ");
+                .fg(theme.colors.accent)
+                .add_modifier(Modifier::ITALIC),
+        ),
+    );
 
-    frame.render_stateful_widget(table, results_area, &mut app.index_state);
+    let list = List::new(items).highlight_style(
+        Style::default()
+            .fg(theme.colors.selection_fg)
+            .bg(theme.colors.selection_bg)
+            .add_modifier(Modifier::BOLD),
+    );
+
+    frame.render_stateful_widget(list, results_area, &mut app.index_state);
 }

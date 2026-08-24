@@ -126,8 +126,18 @@ fn clean_exec(raw: &str) -> String {
         .filter(|token| {
             !matches!(
                 *token,
-                "%f" | "%F" | "%u" | "%U" | "%i" | "%c" | "%k" | "%d" | "%D" | "%n" | "%N"
-                    | "%v" | "%m"
+                "%f" | "%F"
+                    | "%u"
+                    | "%U"
+                    | "%i"
+                    | "%c"
+                    | "%k"
+                    | "%d"
+                    | "%D"
+                    | "%n"
+                    | "%N"
+                    | "%v"
+                    | "%m"
             )
         })
         .collect::<Vec<_>>()
@@ -144,12 +154,22 @@ pub fn filter_entries(entries: &[Entry], query: &str) -> Vec<usize> {
     let mut scored: Vec<(usize, usize)> = entries
         .iter()
         .enumerate()
-        .filter_map(|(i, entry)| entry.name.to_lowercase().find(query.as_str()).map(|pos| (i, pos)))
+        .filter_map(|(i, entry)| {
+            entry
+                .name
+                .to_lowercase()
+                .find(query.as_str())
+                .map(|pos| (i, pos))
+        })
         .collect();
 
     scored.sort_by(|a, b| {
-        a.1.cmp(&b.1)
-            .then_with(|| entries[a.0].name.to_lowercase().cmp(&entries[b.0].name.to_lowercase()))
+        a.1.cmp(&b.1).then_with(|| {
+            entries[a.0]
+                .name
+                .to_lowercase()
+                .cmp(&entries[b.0].name.to_lowercase())
+        })
     });
 
     scored.into_iter().map(|(i, _)| i).collect()
@@ -178,10 +198,18 @@ fn wrap_in_terminal(exec: &str) -> String {
         .ok()
         .filter(|t| !t.is_empty())
         .or_else(|| {
-            ["alacritty", "kitty", "foot", "wezterm", "gnome-terminal", "konsole", "xterm"]
-                .iter()
-                .find(|candidate| command_exists(candidate))
-                .map(|s| s.to_string())
+            [
+                "alacritty",
+                "kitty",
+                "foot",
+                "wezterm",
+                "gnome-terminal",
+                "konsole",
+                "xterm",
+            ]
+            .iter()
+            .find(|candidate| command_exists(candidate))
+            .map(|s| s.to_string())
         })
         .unwrap_or_else(|| "xterm".to_string());
 
@@ -193,4 +221,3 @@ fn command_exists(cmd: &str) -> bool {
         .map(|paths| std::env::split_paths(&paths).any(|dir| dir.join(cmd).is_file()))
         .unwrap_or(false)
 }
-
