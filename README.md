@@ -1,2 +1,2 @@
-# iguana
+# Iguana
 TUI Launcher

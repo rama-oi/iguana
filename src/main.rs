@@ -1,0 +1,43 @@
+mod app;
+mod config;
+mod router;
+mod theme;
+mod util;
+
+use std::io::{self, stdout};
+
+fn main() -> io::Result<()> {
+    if handle_cli_flags() {
+        return Ok(());
+    }
+
+    let mut terminal = ratatui::init();
+    let result = app::run(&mut terminal);
+    ratatui::restore();
+
+    result
+}
+
+fn handle_cli_flags() -> bool {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+
+    if args
+        .iter()
+        .any(|a| a == "--version" || a == "-V" || a == "-v")
+    {
+        println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
+        return true;
+    }
+
+    if args.iter().any(|a| a == "--help" || a == "-H" || a == "-h") {
+        println!(
+            "{} {}\n{}",
+            env!("CARGO_PKG_NAME"),
+            env!("CARGO_PKG_VERSION"),
+            env!("CARGO_PKG_DESCRIPTION")
+        );
+        return true;
+    }
+
+    false
+}
