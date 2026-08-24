@@ -16,7 +16,7 @@ pub fn draw_settings(frame: &mut Frame, app: &mut App) {
 
     let outer_block = Block::default()
         .borders(Borders::ALL)
-        .border_style(Style::default().fg(theme.colors.border));
+        .border_style(Style::default().fg(theme.colors.accent));
 
     let inner_area = outer_block.inner(full_area);
 

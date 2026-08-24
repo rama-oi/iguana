@@ -13,7 +13,7 @@ pub fn draw_settings_about(frame: &mut Frame, app: &mut App) {
 
     let outer_block = Block::default()
         .borders(Borders::ALL)
-        .border_style(Style::default().fg(theme.colors.border));
+        .border_style(Style::default().fg(theme.colors.accent));
 
     let inner_area = outer_block.inner(full_area);
 
@@ -34,7 +34,7 @@ pub fn draw_settings_about(frame: &mut Frame, app: &mut App) {
         env!("CARGO_PKG_HOMEPAGE")
     ))
     .alignment(Alignment::Center)
-    .style(Style::default().fg(theme.colors.text));
+    .style(Style::default().fg(theme.colors.accent));
 
     frame.render_widget(content, vertical[1]);
 

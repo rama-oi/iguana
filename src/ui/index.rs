@@ -91,7 +91,7 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
     frame.render_widget(
         Block::default()
             .borders(Borders::ALL)
-            .border_style(Style::default().fg(theme.colors.border)),
+            .border_style(Style::default().fg(theme.colors.accent)),
         full_area,
     );
 }
