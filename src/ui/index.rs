@@ -4,8 +4,7 @@ use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout},
     style::{Modifier, Style},
-    text::{Line, Span},
-    widgets::{Block, Borders, Cell, List, ListItem, Padding, Paragraph, Row, Table},
+    widgets::{Block, Borders, Cell, Padding, Paragraph, Row, Table},
 };
 
 use crate::app::App;
@@ -49,11 +48,34 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
 
     frame.render_widget(input, query_area);
 
+    let results_area = vertical[1];
+
+    if app.filtered.is_empty() {
+        let message = if app.entries.is_empty() {
+            "No applications found"
+        } else {
+            "No matches"
+        };
+
+        let empty = Paragraph::new(message).style(Style::default().fg(theme.colors.border));
+        frame.render_widget(empty, results_area);
+        return;
+    }
+
+    let name_width = results_area.width.saturating_sub(2);
     let rows = app.filtered.iter().map(|&i| {
         let entry = &app.entries[i];
-        ListItem::new(entry.name.as_str())
+        Row::new(vec![Cell::from(truncate_label(&entry.name, name_width))])
     });
 
-    let list = List::new(rows);
-    frame.render_widget(list, vertical[1]);
+    let table = Table::new(rows, [Constraint::Fill(1)])
+        .row_highlight_style(
+            Style::default()
+                .fg(theme.colors.selection_fg)
+                .bg(theme.colors.selection_bg)
+                .add_modifier(Modifier::BOLD),
+        )
+        .highlight_symbol("> ");
+
+    frame.render_stateful_widget(table, results_area, &mut app.index_state);
 }

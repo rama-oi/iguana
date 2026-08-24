@@ -24,7 +24,14 @@ pub fn handle_index_input(app: &mut App, key: KeyEvent) {
 
         KeyCode::Enter => {
             app.status = None;
-            // launch_app(app);
+
+            if let Some(entry) = app.launch_app() {
+                let exec = entry.exec.clone();
+                let terminal = entry.terminal;
+
+                crate::apps::launch(&exec, terminal);
+                app.should_quit = true;
+            }
         }
 
         KeyCode::Down => {

@@ -1,4 +1,5 @@
 mod app;
+mod apps;
 mod config;
 mod input;
 mod router;

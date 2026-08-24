@@ -27,6 +27,8 @@ pub enum Screen {
 
 pub struct Entry {
     pub name: String,
+    pub exec: String,
+    pub terminal: bool,
 }
 pub struct App {
     pub screen: Screen,
@@ -54,6 +56,8 @@ impl App {
     }
 
     pub fn refresh_filter(&mut self) {
+        self.filtered = crate::apps::filter_entries(&self.entries, &self.query);
+
         let count = self.filtered.len();
         self.index_state
             .select(if count == 0 { None } else { Some(0) });
@@ -85,10 +89,12 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<
         query: String::new(),
         max_len: 0,
         status: None,
-        entries: Vec::new(),
+        entries: crate::apps::discover_apps(),
         filtered: Vec::new(),
-        index_state: TableState::default().with_selected(Some(0)),
+        index_state: TableState::default(),
     };
+
+    app.refresh_filter();
 
     loop {
         terminal.draw(|frame| match app.screen {
