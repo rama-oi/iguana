@@ -1,7 +1,9 @@
 mod app;
 mod config;
+mod input;
 mod router;
 mod theme;
+mod ui;
 mod util;
 
 use std::io::{self, stdout};
