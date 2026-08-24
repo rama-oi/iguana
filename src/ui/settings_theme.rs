@@ -1,7 +1,7 @@
 use ratatui::{
     Frame,
     style::{Modifier, Style},
-    widgets::{Block, Borders, List, ListItem},
+    widgets::{Block, Borders, List, ListItem, Padding},
 };
 
 use crate::app::App;
@@ -10,9 +10,7 @@ pub fn draw_settings_themes(frame: &mut Frame, app: &mut App) {
     let theme = app.theme().clone();
     let full_area = frame.area();
 
-    let outer_block = Block::default()
-        .borders(Borders::ALL)
-        .border_style(Style::default().fg(theme.colors.accent));
+    let outer_block = Block::default().padding(Padding::proportional(1));
 
     let inner_area = outer_block.inner(full_area);
 

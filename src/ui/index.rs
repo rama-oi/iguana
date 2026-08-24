@@ -9,8 +9,6 @@ use ratatui::{
 
 use crate::app::App;
 
-pub const SETTINGS_LABEL: &str = "iguana :: settings";
-
 pub fn draw_index(frame: &mut Frame, app: &mut App) {
     let theme = app.theme().clone();
     let full_area = frame.area();
@@ -24,9 +22,7 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
         full_area,
     );
 
-    let outer_block = Block::default()
-        .borders(Borders::ALL)
-        .border_style(Style::default().fg(theme.colors.accent));
+    let outer_block = Block::default().padding(Padding::proportional(1));
 
     let inner_area = outer_block.inner(full_area);
 
@@ -63,12 +59,15 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
 
     let items: Vec<ListItem> = if let Some(result) = &app.calculator_result {
         vec![
-            ListItem::new(format!(" = {}", truncate_label(result, name_width.saturating_sub(2))))
-                .style(
-                    Style::default()
-                        .fg(theme.colors.accent)
-                        .add_modifier(Modifier::BOLD),
-                ),
+            ListItem::new(format!(
+                " = {}",
+                truncate_label(result, name_width.saturating_sub(2))
+            ))
+            .style(
+                Style::default()
+                    .fg(theme.colors.accent)
+                    .add_modifier(Modifier::BOLD),
+            ),
         ]
     } else {
         let mut items: Vec<ListItem> = app
@@ -81,7 +80,11 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
             .collect();
 
         items.push(
-            ListItem::new(truncate_label(SETTINGS_LABEL, name_width)).style(
+            ListItem::new(truncate_label(
+                &format!(" {} :: settings", env!("CARGO_PKG_NAME")),
+                name_width,
+            ))
+            .style(
                 Style::default()
                     .fg(theme.colors.accent)
                     .add_modifier(Modifier::ITALIC),

@@ -2,7 +2,7 @@ use ratatui::{
     Frame,
     layout::{Alignment, Constraint, Direction, Layout},
     style::Style,
-    widgets::{Block, Borders, Paragraph},
+    widgets::{Block, Borders, Padding, Paragraph},
 };
 
 use crate::app::App;
@@ -11,9 +11,7 @@ pub fn draw_settings_about(frame: &mut Frame, app: &mut App) {
     let theme = app.theme().clone();
     let full_area = frame.area();
 
-    let outer_block = Block::default()
-        .borders(Borders::ALL)
-        .border_style(Style::default().fg(theme.colors.accent));
+    let outer_block = Block::default().padding(Padding::proportional(1));
 
     let inner_area = outer_block.inner(full_area);
 
