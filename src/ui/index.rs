@@ -5,7 +5,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Cell, List, Padding, Paragraph, Row, Table},
+    widgets::{Block, Borders, Cell, List, ListItem, Padding, Paragraph, Row, Table},
 };
 
 use crate::app::App;
@@ -49,6 +49,11 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
 
     frame.render_widget(input, query_area);
 
-    let list = List::new(["0", "1"]);
+    let rows = app.filtered.iter().map(|&i| {
+        let entry = &app.entries[i];
+        ListItem::new(entry.name.as_str())
+    });
+
+    let list = List::new(rows);
     frame.render_widget(list, vertical[1]);
 }

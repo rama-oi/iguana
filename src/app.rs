@@ -12,13 +12,21 @@ use crate::ui::index::draw_index;
 // use crate::ui::settings_theme::draw_settings_themes;
 
 use crossterm::event::{self, Event, KeyEvent};
-use ratatui::{Terminal, backend::CrosstermBackend, widgets::ListState};
+use ratatui::{
+    Terminal,
+    backend::CrosstermBackend,
+    widgets::{ListState, TableState},
+};
 
 pub enum Screen {
     Index,
     // Settings,
     // Themes,
     // About,
+}
+
+pub struct Entry {
+    pub name: String,
 }
 pub struct App {
     pub screen: Screen,
@@ -32,6 +40,10 @@ pub struct App {
     pub config: Config,
     pub query: String,
     pub max_len: usize,
+    pub status: Option<String>,
+    pub entries: Vec<Entry>,
+    pub filtered: Vec<usize>,
+    pub index_state: TableState,
 }
 
 impl App {
@@ -39,6 +51,18 @@ impl App {
         self.themes
             .get(self.selected_theme)
             .unwrap_or(&self.themes[0])
+    }
+
+    pub fn refresh_filter(&mut self) {
+        let count = self.filtered.len();
+        self.index_state
+            .select(if count == 0 { None } else { Some(0) });
+    }
+
+    pub fn launch_app(&self) -> Option<&Entry> {
+        let selected = self.index_state.selected()?;
+        let entry_idx = *self.filtered.get(selected)?;
+        self.entries.get(entry_idx)
     }
 }
 
@@ -60,6 +84,10 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<
         config,
         query: String::new(),
         max_len: 0,
+        status: None,
+        entries: Vec::new(),
+        filtered: Vec::new(),
+        index_state: TableState::default().with_selected(Some(0)),
     };
 
     loop {
