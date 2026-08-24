@@ -33,7 +33,7 @@ impl Theme {
     pub fn fallback() -> Self {
         Self {
             name: "Default".to_string(),
-            author: "iguana".to_string(),
+            author: "coqui".to_string(),
             version: 1,
             colors: ThemeColors {
                 background: Color::Reset,

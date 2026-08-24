@@ -1,6 +1,6 @@
-# Iguana
+# Coqui
 
-![preview](https://raw.githubusercontent.com/rama-oi/iguana/main/assets/screenshots/0.png)
+![preview](https://raw.githubusercontent.com/rama-oi/coqui/main/assets/screenshots/0.png)
 
 A fast, keyboard-driven TUI application launcher.
 

@@ -18,11 +18,11 @@ impl Default for Config {
     }
 }
 
-const SAMPLE_CONFIG: &str = include_str!("../iguana_config.toml.sample");
+const SAMPLE_CONFIG: &str = include_str!("../coqui_config.toml.sample");
 
 fn config_path() -> Option<std::path::PathBuf> {
     let home = std::env::var_os("HOME")?;
-    Some(std::path::PathBuf::from(home).join(".config/rama/iguana_config.toml"))
+    Some(std::path::PathBuf::from(home).join(".config/rama/coqui_config.toml"))
 }
 
 pub fn load_config() -> Config {

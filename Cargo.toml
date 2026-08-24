@@ -1,12 +1,12 @@
 [package]
-name = "iguana"
+name = "coqui"
 version = "2026.1.0"
 edition = "2024"
 description = "TUI Launcher"
 authors = ["Pombo <https://github.com/pomboverso>"]
 license = "GPL-3.0-or-later"
-repository = "https://github.com/rama-oi/iguana"
-homepage = "https://github.com/rama-oi/iguana"
+repository = "https://github.com/rama-oi/coqui"
+homepage = "https://github.com/rama-oi/coqui"
 readme = "readme.md"
 keywords = ["launcher", "linux", "tui", "foss", "sway"]
 categories = ["command-line-utilities"]
