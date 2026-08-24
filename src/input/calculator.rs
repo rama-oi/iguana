@@ -16,6 +16,9 @@ pub fn evaluate(query: &str) -> Option<String> {
 }
 
 fn looks_like_math(query: &str) -> bool {
+    let has_operator = query
+        .chars()
+        .any(|c| matches!(c, '+' | '-' | '*' | '/' | '^'));
 
     has_operator
         && query.chars().all(|c| {
@@ -46,6 +49,8 @@ fn try_clipboard_cmd(cmd: &str, args: &[&str], text: &str) -> bool {
     }
 
     let Ok(mut child) = Command::new(cmd)
+        .args(args)
+        .stdin(Stdio::piped())
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .spawn()
