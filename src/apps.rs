@@ -216,7 +216,7 @@ fn wrap_in_terminal(exec: &str) -> String {
     format!("{term} -e sh -c '{exec}'")
 }
 
-fn command_exists(cmd: &str) -> bool {
+pub(crate) fn command_exists(cmd: &str) -> bool {
     std::env::var_os("PATH")
         .map(|paths| std::env::split_paths(&paths).any(|dir| dir.join(cmd).is_file()))
         .unwrap_or(false)

@@ -26,7 +26,13 @@ pub fn handle_index_input(app: &mut App, key: KeyEvent) {
         KeyCode::Enter => {
             app.status = None;
 
-            if let Some(entry) = app.launch_app() {
+            if let Some(result) = app.calculator_result.clone() {
+                if crate::input::calculator::copy_to_clipboard(&result) {
+                    app.should_quit = true;
+                } else {
+                    app.status = Some("Could not copy result to clipboard".to_string());
+                }
+            } else if let Some(entry) = app.launch_app() {
                 let exec = entry.exec.clone();
                 let terminal = entry.terminal;
 

@@ -29,7 +29,7 @@ pub struct Entry {
 pub struct App {
     pub screen: Screen,
     pub should_quit: bool,
-    // pub calculator_result: Option<String>,
+    pub calculator_result: Option<String>,
     pub last_key_event: Option<KeyEvent>,
     pub themes: Vec<Theme>,
     pub selected_theme: usize,
@@ -52,7 +52,14 @@ impl App {
     }
 
     pub fn refresh_filter(&mut self) {
-        self.filtered = crate::apps::filter_entries(&self.entries, &self.query);
+        self.calculator_result = crate::input::calculator::evaluate(&self.query);
+
+        self.filtered = if self.calculator_result.is_some() {
+            Vec::new()
+        } else {
+            crate::apps::filter_entries(&self.entries, &self.query)
+        };
+
         self.index_state.select(Some(0));
     }
 
@@ -63,11 +70,15 @@ impl App {
     }
 
     pub fn index_row_count(&self) -> usize {
-        self.filtered.len() + 1
+        if self.calculator_result.is_some() {
+            1
+        } else {
+            self.filtered.len() + 1
+        }
     }
 
     pub fn selected_is_settings(&self) -> bool {
-        self.index_state.selected() == Some(self.filtered.len())
+        self.calculator_result.is_none() && self.index_state.selected() == Some(self.filtered.len())
     }
 }
 
@@ -80,6 +91,7 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<
     let mut app = App {
         screen: Screen::Index,
         should_quit: false,
+        calculator_result: None,
         last_key_event: None,
         themes,
         selected_theme,
@@ -122,3 +134,4 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<
 
     Ok(())
 }
+

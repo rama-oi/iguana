@@ -9,6 +9,8 @@ use ratatui::{
 
 use crate::app::App;
 
+pub const SETTINGS_LABEL: &str = "iguana :: settings";
+
 pub fn draw_index(frame: &mut Frame, app: &mut App) {
     let theme = app.theme().clone();
     let full_area = frame.area();
@@ -22,10 +24,11 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
         full_area,
     );
 
-    let inner_area = Block::default()
+    let outer_block = Block::default()
         .borders(Borders::ALL)
-        .border_style(Style::default().fg(theme.colors.border))
-        .inner(full_area);
+        .border_style(Style::default().fg(theme.colors.accent));
+
+    let inner_area = outer_block.inner(full_area);
 
     let constraints = vec![Constraint::Length(3), Constraint::Fill(1)];
 
@@ -35,9 +38,9 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
         .split(inner_area);
 
     let input_text = app.query.clone();
-
+    let input_style = Style::default().fg(theme.colors.text);
     let input = Paragraph::new(input_text.as_str())
-        .style(Style::default().fg(theme.colors.text))
+        .style(input_style)
         .block(
             Block::default()
                 .borders(Borders::ALL)
@@ -46,7 +49,6 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
         );
 
     let query_area = vertical[0];
-
     app.max_len = query_area.width.saturating_sub(4) as usize;
 
     frame.set_cursor_position((
@@ -59,27 +61,35 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
     let results_area = vertical[1];
     let name_width = results_area.width.saturating_sub(2);
 
-    let mut items: Vec<ListItem> = app
-        .filtered
-        .iter()
-        .map(|&i| {
-            let entry = &app.entries[i];
+    let items: Vec<ListItem> = if let Some(result) = &app.calculator_result {
+        vec![
+            ListItem::new(format!(" = {}", truncate_label(result, name_width.saturating_sub(2))))
+                .style(
+                    Style::default()
+                        .fg(theme.colors.accent)
+                        .add_modifier(Modifier::BOLD),
+                ),
+        ]
+    } else {
+        let mut items: Vec<ListItem> = app
+            .filtered
+            .iter()
+            .map(|&i| {
+                let entry = &app.entries[i];
+                ListItem::new(format!(" {}", truncate_label(&entry.name, name_width)))
+            })
+            .collect();
 
-            ListItem::new(format!(" {}", truncate_label(&entry.name, name_width)))
-        })
-        .collect();
+        items.push(
+            ListItem::new(truncate_label(SETTINGS_LABEL, name_width)).style(
+                Style::default()
+                    .fg(theme.colors.accent)
+                    .add_modifier(Modifier::ITALIC),
+            ),
+        );
 
-    items.push(
-        ListItem::new(truncate_label(
-            &format!("{} :: settings", env!("CARGO_PKG_NAME")),
-            name_width,
-        ))
-        .style(
-            Style::default()
-                .fg(theme.colors.accent)
-                .add_modifier(Modifier::ITALIC),
-        ),
-    );
+        items
+    };
 
     let list = List::new(items).highlight_style(
         Style::default()
@@ -90,10 +100,5 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
 
     frame.render_stateful_widget(list, results_area, &mut app.index_state);
 
-    frame.render_widget(
-        Block::default()
-            .borders(Borders::ALL)
-            .border_style(Style::default().fg(theme.colors.accent)),
-        full_area,
-    );
+    frame.render_widget(outer_block, full_area);
 }
