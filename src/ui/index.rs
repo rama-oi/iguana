@@ -24,17 +24,22 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
         full_area,
     );
 
-    let mut constraints = vec![Constraint::Length(3), Constraint::Fill(1)];
+    let inner_area = Block::default()
+        .borders(Borders::ALL)
+        .border_style(Style::default().fg(theme.colors.border))
+        .inner(full_area);
+
+    let constraints = vec![Constraint::Length(3), Constraint::Fill(1)];
 
     let vertical = Layout::default()
         .direction(Direction::Vertical)
         .constraints(constraints)
-        .split(full_area);
+        .split(inner_area);
 
     let input_text = app.query.clone();
-    let input_style = Style::default().fg(theme.colors.text);
+
     let input = Paragraph::new(input_text.as_str())
-        .style(input_style)
+        .style(Style::default().fg(theme.colors.text))
         .block(
             Block::default()
                 .borders(Borders::ALL)
@@ -43,6 +48,7 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
         );
 
     let query_area = vertical[0];
+
     app.max_len = query_area.width.saturating_sub(4) as usize;
 
     frame.set_cursor_position((
@@ -61,7 +67,7 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
         .map(|&i| {
             let entry = &app.entries[i];
 
-            ListItem::new(truncate_label(&entry.name, name_width))
+            ListItem::new(format!(" {}", truncate_label(&entry.name, name_width)))
         })
         .collect();
 
@@ -81,4 +87,11 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
     );
 
     frame.render_stateful_widget(list, results_area, &mut app.index_state);
+
+    frame.render_widget(
+        Block::default()
+            .borders(Borders::ALL)
+            .border_style(Style::default().fg(theme.colors.border)),
+        full_area,
+    );
 }

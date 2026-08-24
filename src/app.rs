@@ -29,7 +29,7 @@ pub struct Entry {
 pub struct App {
     pub screen: Screen,
     pub should_quit: bool,
-    pub status_message: Option<String>,
+    // pub calculator_result: Option<String>,
     pub last_key_event: Option<KeyEvent>,
     pub themes: Vec<Theme>,
     pub selected_theme: usize,
@@ -80,7 +80,6 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<
     let mut app = App {
         screen: Screen::Index,
         should_quit: false,
-        status_message: None,
         last_key_event: None,
         themes,
         selected_theme,

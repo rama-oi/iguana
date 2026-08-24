@@ -1,7 +1,7 @@
 use ratatui::{
     Frame,
     style::{Modifier, Style},
-    widgets::{List, ListItem},
+    widgets::{Block, Borders, List, ListItem},
 };
 
 use crate::app::App;
@@ -14,7 +14,16 @@ pub fn draw_settings(frame: &mut Frame, app: &mut App) {
     let theme = app.theme().clone();
     let full_area = frame.area();
 
-    let items = [format!("Switch Theme\n{}", theme.name), "About".to_string()];
+    let outer_block = Block::default()
+        .borders(Borders::ALL)
+        .border_style(Style::default().fg(theme.colors.border));
+
+    let inner_area = outer_block.inner(full_area);
+
+    let items = [
+        format!(" Switch Theme\n {}", theme.name),
+        " About".to_string(),
+    ];
 
     let settings_list = List::new(items.into_iter().map(ListItem::new)).highlight_style(
         Style::default()
@@ -23,5 +32,7 @@ pub fn draw_settings(frame: &mut Frame, app: &mut App) {
             .add_modifier(Modifier::BOLD),
     );
 
-    frame.render_stateful_widget(settings_list, full_area, &mut app.settings_list_state);
+    frame.render_stateful_widget(settings_list, inner_area, &mut app.settings_list_state);
+
+    frame.render_widget(outer_block, full_area);
 }

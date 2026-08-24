@@ -2,7 +2,7 @@ use ratatui::{
     Frame,
     layout::{Alignment, Constraint, Direction, Layout},
     style::Style,
-    widgets::Paragraph,
+    widgets::{Block, Borders, Paragraph},
 };
 
 use crate::app::App;
@@ -11,6 +11,12 @@ pub fn draw_settings_about(frame: &mut Frame, app: &mut App) {
     let theme = app.theme().clone();
     let full_area = frame.area();
 
+    let outer_block = Block::default()
+        .borders(Borders::ALL)
+        .border_style(Style::default().fg(theme.colors.border));
+
+    let inner_area = outer_block.inner(full_area);
+
     let vertical = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
@@ -18,7 +24,7 @@ pub fn draw_settings_about(frame: &mut Frame, app: &mut App) {
             Constraint::Length(3),
             Constraint::Fill(1),
         ])
-        .split(full_area);
+        .split(inner_area);
 
     let content = Paragraph::new(format!(
         "{} {}\n{}\n{}",
@@ -31,4 +37,6 @@ pub fn draw_settings_about(frame: &mut Frame, app: &mut App) {
     .style(Style::default().fg(theme.colors.text));
 
     frame.render_widget(content, vertical[1]);
+
+    frame.render_widget(outer_block, full_area);
 }
