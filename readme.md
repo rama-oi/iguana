@@ -35,6 +35,8 @@ alacritty --class floating-terminal -e coqui
 
 ### i3
 
+> ⚠️ **Untested:** If this works for you, please open an issue so I can validate the configuration.
+
 Add the following to `~/.config/i3/config`:
 
 ```ini
@@ -48,6 +50,8 @@ alacritty --class floating-terminal -e coqui
 ```
 
 ### Hyprland
+
+> ⚠️ **Untested:** If this works for you, please open an issue so I can validate the configuration.
 
 For Hyprland 0.55+, add the following to `~/.config/hypr/hyprland.lua`:
 
@@ -72,6 +76,32 @@ windowrule = center, class:^(floating-terminal)$
 
 Call Coqui with:
 
+```sh
+alacritty --class floating-terminal -e coqui
+```
+
+### Openbox
+
+> ⚠️ **Untested:** If this works for you, please open an issue so I can validate the configuration. 
+
+> **Hint:** If `class` doesn't work, try `name` instead.
+
+Add the following to `~/.config/openbox/rc.xml` inside the `<applications>` section:
+```xml
+<application class="floating-terminal">
+    <decor>no</decor>
+    <focus>yes</focus>
+    <position force="yes">
+        <x>center</x>
+        <y>center</y>
+    </position>
+    <size>
+        <width>400</width>
+        <height>300</height>
+    </size>
+</application>
+```
+Call Coqui with:
 ```sh
 alacritty --class floating-terminal -e coqui
 ```
