@@ -12,3 +12,66 @@ A fast, keyboard-driven TUI application launcher.
 - **Theming**: switch between bundled themes (Catppuccin, Dracula, Tokyo
   Night, and more) live from the settings screen; your choice is saved to
   your config automatically.
+
+## Installation
+
+You need a small window-manager configuration to make Coqui's terminal float at a fixed size.
+
+> I'm using `Alacritty` in these examples, but feel free to test it with your preferred terminal.
+
+### Sway
+
+Add the following to `~/.config/sway/config`:
+
+```ini
+for_window [app_id="floating-terminal"] floating enable, resize set width 400px height 300px, move position center
+````
+
+Call Coqui with:
+
+```sh
+alacritty --class floating-terminal -e coqui
+```
+
+### i3
+
+Add the following to `~/.config/i3/config`:
+
+```ini
+for_window [class="floating-terminal"] floating enable, resize set 400 px 300 px, move position center
+```
+
+Call Coqui with:
+
+```sh
+alacritty --class floating-terminal -e coqui
+```
+
+### Hyprland
+
+For Hyprland 0.55+, add the following to `~/.config/hypr/hyprland.lua`:
+
+```lua
+hl.window_rule({
+    match = {
+        class = "floating-terminal"
+    },
+    float = true,
+    size = "400 300",
+    center = true
+})
+```
+
+For Hyprland 0.54 or older, add the following to `~/.config/hypr/hyprland.conf`:
+
+```ini
+windowrule = float, class:^(floating-terminal)$
+windowrule = size 400 300, class:^(floating-terminal)$
+windowrule = center, class:^(floating-terminal)$
+```
+
+Call Coqui with:
+
+```sh
+alacritty --class floating-terminal -e coqui
+```
