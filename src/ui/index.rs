@@ -98,7 +98,12 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
             .iter()
             .map(|&i| {
                 let entry = &app.entries[i];
-                ListItem::new(format!(" {}", truncate_label(&entry.name, name_width)))
+                if entry.separator {
+                    ListItem::new("-".repeat(name_width as usize))
+                        .style(Style::default().fg(theme.colors.accent))
+                } else {
+                    ListItem::new(format!(" {}", truncate_label(&entry.name, name_width)))
+                }
             })
             .collect();
 

@@ -3,6 +3,7 @@ use serde::Deserialize;
 #[derive(Debug, Clone, Deserialize)]
 pub struct CommandEntry {
     pub label: String,
+    #[serde(default)]
     pub cmd: String,
     #[serde(default)]
     pub description: String,

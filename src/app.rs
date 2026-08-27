@@ -26,6 +26,7 @@ pub struct Entry {
     pub name: String,
     pub exec: String,
     pub terminal: bool,
+    pub separator: bool,
 }
 pub struct App {
     pub screen: Screen,
@@ -65,6 +66,11 @@ impl App {
         };
 
         self.index_state.select(Some(0));
+
+        if self.is_row_separator(0) {
+            let first = self.next_selectable_row(0, true);
+            self.index_state.select(Some(first));
+        }
     }
 
     pub fn launch_app(&self) -> Option<&Entry> {
@@ -77,8 +83,43 @@ impl App {
         if self.calculator_result.is_some() {
             1
         } else {
-            self.filtered.len() + 1
+            self.filtered.len().max(1)
         }
+    }
+
+    fn entry_at_row(&self, row: usize) -> Option<&Entry> {
+        let entry_idx = *self.filtered.get(row)?;
+        self.entries.get(entry_idx)
+    }
+
+    pub fn is_row_separator(&self, row: usize) -> bool {
+        self.entry_at_row(row).map(|e| e.separator).unwrap_or(false)
+    }
+
+    pub fn next_selectable_row(&self, from: usize, forward: bool) -> usize {
+        let row_count = self.index_row_count();
+
+        if row_count == 0 || self.calculator_result.is_some() {
+            return from;
+        }
+
+        let mut idx = from;
+
+        for _ in 0..row_count {
+            idx = if forward {
+                if idx + 1 >= row_count { 0 } else { idx + 1 }
+            } else if idx == 0 {
+                row_count - 1
+            } else {
+                idx - 1
+            };
+
+            if !self.is_row_separator(idx) {
+                return idx;
+            }
+        }
+
+        from
     }
 
     pub fn toggle_command_source(&mut self) {
@@ -103,10 +144,22 @@ fn custom_entries_from_config(config: &Config) -> Vec<Entry> {
     config
         .commands
         .iter()
-        .map(|command| Entry {
-            name: command.label.clone(),
-            exec: command.cmd.clone(),
-            terminal: false,
+        .map(|command| {
+            if command.label.trim() == "-" {
+                Entry {
+                    name: String::new(),
+                    exec: String::new(),
+                    terminal: false,
+                    separator: true,
+                }
+            } else {
+                Entry {
+                    name: command.label.clone(),
+                    exec: command.cmd.clone(),
+                    terminal: false,
+                    separator: false,
+                }
+            }
         })
         .collect()
 }
