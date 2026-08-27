@@ -4,6 +4,7 @@ use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout},
     style::{Modifier, Style},
+    text::{Line, Span},
     widgets::{Block, Borders, List, ListItem, Padding, Paragraph},
 };
 
@@ -26,29 +27,51 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
 
     let inner_area = outer_block.inner(full_area);
 
-    let constraints = vec![Constraint::Length(3), Constraint::Fill(1)];
+    let constraints = vec![
+        Constraint::Length(3),
+        Constraint::Fill(1),
+        Constraint::Length(1),
+        Constraint::Length(1),
+    ];
 
     let vertical = Layout::default()
         .direction(Direction::Vertical)
         .constraints(constraints)
         .split(inner_area);
 
-    let input_text = app.query.clone();
     let input_style = Style::default().fg(theme.colors.text);
-    let input = Paragraph::new(input_text.as_str())
-        .style(input_style)
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .padding(Padding::horizontal(1))
-                .border_style(Style::default().fg(theme.colors.border)),
-        );
+    let input_block = Block::default()
+        .borders(Borders::ALL)
+        .padding(Padding::horizontal(1))
+        .border_style(Style::default().fg(theme.colors.border));
+
+    let prefix = if app.calculator_result.is_some() {
+        "Calc: "
+    } else if app.using_custom {
+        "Custom: "
+    } else {
+        "Apps: "
+    };
+
+    let display_text = format!("{prefix}{}", app.query);
+
+    let input = Paragraph::new(Line::from(vec![
+        Span::styled(
+            prefix,
+            Style::default()
+                .fg(theme.colors.accent)
+                .add_modifier(Modifier::BOLD),
+        ),
+        Span::styled(app.query.as_str(), input_style),
+    ]))
+    .block(input_block);
 
     let query_area = vertical[0];
-    app.max_len = query_area.width.saturating_sub(4) as usize;
+    let prefix_len = prefix.chars().count();
+    app.max_len = (query_area.width.saturating_sub(4) as usize).saturating_sub(prefix_len);
 
     frame.set_cursor_position((
-        query_area.x + 2 + input_text.chars().count() as u16,
+        query_area.x + 2 + display_text.chars().count() as u16,
         query_area.y + 1,
     ));
 
@@ -70,7 +93,7 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
             ),
         ]
     } else {
-        let mut items: Vec<ListItem> = app
+        let items: Vec<ListItem> = app
             .filtered
             .iter()
             .map(|&i| {
@@ -78,18 +101,6 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
                 ListItem::new(format!(" {}", truncate_label(&entry.name, name_width)))
             })
             .collect();
-
-        items.push(
-            ListItem::new(truncate_label(
-                &format!(" {} :: settings", env!("CARGO_PKG_NAME")),
-                name_width,
-            ))
-            .style(
-                Style::default()
-                    .fg(theme.colors.accent)
-                    .add_modifier(Modifier::ITALIC),
-            ),
-        );
 
         items
     };
@@ -104,4 +115,14 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
     frame.render_stateful_widget(list, results_area, &mut app.index_state);
 
     frame.render_widget(outer_block, full_area);
+
+    let separator = Block::default()
+        .borders(Borders::TOP)
+        .border_style(Style::new().fg(theme.colors.border));
+
+    frame.render_widget(separator, vertical[2]);
+
+    let help = Paragraph::new(" [↑↓]  [^s]  [^l]").style(Style::default().fg(theme.colors.accent));
+
+    frame.render_widget(help, vertical[3]);
 }
