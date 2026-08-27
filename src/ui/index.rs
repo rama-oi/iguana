@@ -26,7 +26,12 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
 
     let inner_area = outer_block.inner(full_area);
 
-    let constraints = vec![Constraint::Length(3), Constraint::Fill(1)];
+    let constraints = vec![
+        Constraint::Length(3),
+        Constraint::Fill(1),
+        Constraint::Length(1),
+        Constraint::Length(1),
+    ];
 
     let vertical = Layout::default()
         .direction(Direction::Vertical)
@@ -70,7 +75,7 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
             ),
         ]
     } else {
-        let mut items: Vec<ListItem> = app
+        let items: Vec<ListItem> = app
             .filtered
             .iter()
             .map(|&i| {
@@ -78,18 +83,6 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
                 ListItem::new(format!(" {}", truncate_label(&entry.name, name_width)))
             })
             .collect();
-
-        items.push(
-            ListItem::new(truncate_label(
-                &format!(" {} :: settings", env!("CARGO_PKG_NAME")),
-                name_width,
-            ))
-            .style(
-                Style::default()
-                    .fg(theme.colors.accent)
-                    .add_modifier(Modifier::ITALIC),
-            ),
-        );
 
         items
     };
@@ -104,4 +97,14 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
     frame.render_stateful_widget(list, results_area, &mut app.index_state);
 
     frame.render_widget(outer_block, full_area);
+
+    let separator = Block::default()
+        .borders(Borders::TOP)
+        .border_style(Style::new().fg(theme.colors.border));
+
+    frame.render_widget(separator, vertical[2]);
+
+    let help = Paragraph::new(" [↑↓]  [^s]  [^l]").style(Style::default().fg(theme.colors.accent));
+
+    frame.render_widget(help, vertical[3]);
 }

@@ -76,10 +76,6 @@ impl App {
             self.filtered.len() + 1
         }
     }
-
-    pub fn selected_is_settings(&self) -> bool {
-        self.calculator_result.is_none() && self.index_state.selected() == Some(self.filtered.len())
-    }
 }
 
 pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> {
