@@ -38,40 +38,30 @@ pub fn handle_index_input(app: &mut App, key: KeyEvent) {
                         app.status = Some("Could not copy result to clipboard".to_string());
                     }
                 } else if let Some(entry) = app.launch_app() {
-                    let exec = entry.exec.clone();
-                    let terminal = entry.terminal;
+                    if !entry.separator {
+                        let exec = entry.exec.clone();
+                        let terminal = entry.terminal;
 
-                    crate::apps::launch(&exec, terminal);
-                    app.should_quit = true;
+                        crate::apps::launch(&exec, terminal);
+                        app.should_quit = true;
+                    }
                 }
             }
 
             KeyCode::Down => {
-                let row_count = app.index_row_count();
                 app.status = None;
 
                 let selected = app.index_state.selected().unwrap_or(0);
-
-                let next = if selected >= row_count - 1 {
-                    0
-                } else {
-                    selected + 1
-                };
+                let next = app.next_selectable_row(selected, true);
 
                 app.index_state.select(Some(next));
             }
 
             KeyCode::Up => {
-                let row_count = app.index_row_count();
                 app.status = None;
 
                 let selected = app.index_state.selected().unwrap_or(0);
-
-                let prev = if selected == 0 {
-                    row_count - 1
-                } else {
-                    selected - 1
-                };
+                let prev = app.next_selectable_row(selected, false);
 
                 app.index_state.select(Some(prev));
             }

@@ -9,8 +9,8 @@ A fast, keyboard-driven TUI application launcher.
 - **Inline calculator**: type a math expression (`12 * 4`, `(3 + 4) / 2`) and the list collapses to a single result row. Press Enter to copy it straight to your clipboard.
 - **Keyboard-first navigation**: `arrow keys` to move through the list, `Enter` to launch or select, `Esc` to back out.
 - **Built-in settings**: always available as the last item in the list, no separate hotkey needed.
-- **Theming**: switch between bundled themes (Catppuccin, Dracula, Tokyo Night, and more) live from the settings screen; your choice is saved to your config automatically.
-- **Custom Lists**: toggle between your default list and your system list.
+- **Theming**: switch between bundled themes (Catppuccin, Dracula, Tokyo Night, and more) live from the settings screen `ctrl + s`.
+- **Custom Lists**: toggle between your default list and your system list with `ctrl + l`.
 
 > In order to create a new element for your custom list create an entry in the `coqui_config.toml` like the following:
 ```toml
@@ -19,11 +19,11 @@ label = "Jaiba"
 cmd = "alacritty -e jaiba"
 description = "TUI Password manager"
 ```
-
-## Keybindings
-
-- **^s**: show settings.
-- **^l**: toggle between lists.
+or this for a separator
+```toml
+[[command]]
+label = "-"
+```
 
 ## Installation
 

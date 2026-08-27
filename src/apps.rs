@@ -118,6 +118,7 @@ fn parse_desktop_file(path: &Path) -> Option<Entry> {
         name,
         exec,
         terminal,
+        separator: false,
     })
 }
 

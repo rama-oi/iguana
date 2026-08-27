@@ -1,6 +1,6 @@
 [package]
 name = "coqui"
-version = "2026.3.0"
+version = "2026.4.0"
 edition = "2024"
 description = "TUI Launcher"
 authors = ["Pombo <https://github.com/pomboverso>"]
