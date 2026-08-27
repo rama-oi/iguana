@@ -40,14 +40,19 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
 
     let input_text = app.query.clone();
     let input_style = Style::default().fg(theme.colors.text);
+    let mut input_block = Block::default()
+        .borders(Borders::ALL)
+        .padding(Padding::horizontal(1))
+        .border_style(Style::default().fg(theme.colors.border));
+
+    if !app.custom_entries.is_empty() {
+        let title = if app.using_custom { " Custom " } else { " Apps " };
+        input_block = input_block.title(title);
+    }
+
     let input = Paragraph::new(input_text.as_str())
         .style(input_style)
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .padding(Padding::horizontal(1))
-                .border_style(Style::default().fg(theme.colors.border)),
-        );
+        .block(input_block);
 
     let query_area = vertical[0];
     app.max_len = query_area.width.saturating_sub(4) as usize;

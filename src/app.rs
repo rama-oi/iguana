@@ -21,6 +21,7 @@ pub enum Screen {
     About,
 }
 
+#[derive(Clone)]
 pub struct Entry {
     pub name: String,
     pub exec: String,
@@ -40,6 +41,9 @@ pub struct App {
     pub max_len: usize,
     pub status: Option<String>,
     pub entries: Vec<Entry>,
+    pub system_entries: Vec<Entry>,
+    pub custom_entries: Vec<Entry>,
+    pub using_custom: bool,
     pub filtered: Vec<usize>,
     pub index_state: ListState,
 }
@@ -76,6 +80,35 @@ impl App {
             self.filtered.len() + 1
         }
     }
+
+    pub fn toggle_command_source(&mut self) {
+        if self.custom_entries.is_empty() {
+            return;
+        }
+
+        self.using_custom = !self.using_custom;
+        self.entries = if self.using_custom {
+            self.custom_entries.clone()
+        } else {
+            self.system_entries.clone()
+        };
+
+        self.query.clear();
+        self.status = None;
+        self.refresh_filter();
+    }
+}
+
+fn custom_entries_from_config(config: &Config) -> Vec<Entry> {
+    config
+        .commands
+        .iter()
+        .map(|command| Entry {
+            name: command.label.clone(),
+            exec: command.cmd.clone(),
+            terminal: false,
+        })
+        .collect()
 }
 
 pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> {
@@ -83,6 +116,15 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<
     install_bundled_themes_if_missing();
     let themes = discover_themes();
     let selected_theme = find_theme_index(&themes, &config.theme);
+
+    let system_entries = crate::apps::discover_apps();
+    let custom_entries = custom_entries_from_config(&config);
+    let using_custom = !custom_entries.is_empty();
+    let entries = if using_custom {
+        custom_entries.clone()
+    } else {
+        system_entries.clone()
+    };
 
     let mut app = App {
         screen: Screen::Index,
@@ -97,7 +139,10 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<
         query: String::new(),
         max_len: 0,
         status: None,
-        entries: crate::apps::discover_apps(),
+        entries,
+        system_entries,
+        custom_entries,
+        using_custom,
         filtered: Vec::new(),
         index_state: ListState::default(),
     };

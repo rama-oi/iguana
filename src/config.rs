@@ -1,9 +1,19 @@
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]
+pub struct CommandEntry {
+    pub label: String,
+    pub cmd: String,
+    #[serde(default)]
+    pub description: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
 pub struct Config {
     #[serde(default = "default_theme")]
     pub theme: String,
+    #[serde(default, rename = "command")]
+    pub commands: Vec<CommandEntry>,
 }
 
 fn default_theme() -> String {
@@ -14,6 +24,7 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             theme: default_theme(),
+            commands: Vec::new(),
         }
     }
 }
