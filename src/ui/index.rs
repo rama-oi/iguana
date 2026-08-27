@@ -4,6 +4,7 @@ use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout},
     style::{Modifier, Style},
+    text::{Line, Span},
     widgets::{Block, Borders, List, ListItem, Padding, Paragraph},
 };
 
@@ -38,27 +39,39 @@ pub fn draw_index(frame: &mut Frame, app: &mut App) {
         .constraints(constraints)
         .split(inner_area);
 
-    let input_text = app.query.clone();
     let input_style = Style::default().fg(theme.colors.text);
-    let mut input_block = Block::default()
+    let input_block = Block::default()
         .borders(Borders::ALL)
         .padding(Padding::horizontal(1))
         .border_style(Style::default().fg(theme.colors.border));
 
-    if !app.custom_entries.is_empty() {
-        let title = if app.using_custom { " Custom " } else { " Apps " };
-        input_block = input_block.title(title);
-    }
+    let prefix = if app.calculator_result.is_some() {
+        "Calc: "
+    } else if app.using_custom {
+        "Custom: "
+    } else {
+        "Apps: "
+    };
 
-    let input = Paragraph::new(input_text.as_str())
-        .style(input_style)
-        .block(input_block);
+    let display_text = format!("{prefix}{}", app.query);
+
+    let input = Paragraph::new(Line::from(vec![
+        Span::styled(
+            prefix,
+            Style::default()
+                .fg(theme.colors.accent)
+                .add_modifier(Modifier::BOLD),
+        ),
+        Span::styled(app.query.as_str(), input_style),
+    ]))
+    .block(input_block);
 
     let query_area = vertical[0];
-    app.max_len = query_area.width.saturating_sub(4) as usize;
+    let prefix_len = prefix.chars().count();
+    app.max_len = (query_area.width.saturating_sub(4) as usize).saturating_sub(prefix_len);
 
     frame.set_cursor_position((
-        query_area.x + 2 + input_text.chars().count() as u16,
+        query_area.x + 2 + display_text.chars().count() as u16,
         query_area.y + 1,
     ));
 
